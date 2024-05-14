@@ -5,6 +5,13 @@ import { Context } from '../../context/Context'
 
 const Main = () => {
 
+
+  const context = useContext(Context);
+
+  if (!context) {
+    throw new Error("Main must be used within a ContextProvider");
+  }
+
   const { onSent,
     recentPrompt,
     showResult,
@@ -12,7 +19,7 @@ const Main = () => {
     resultData,
     setInput,
     input
-  } = useContext(Context);
+  } = context;
 
 
   return (

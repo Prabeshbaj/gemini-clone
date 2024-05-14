@@ -1,25 +1,44 @@
-import { createContext, useState } from "react";
+import { createContext, useState, ReactNode } from "react";
 import runChat from "../config/gemini";
+import React from "react";
 
-export const Context = createContext();
+interface ContextValue {
+    prevPrompts: string[],
+    setPrevPrompts: React.Dispatch<React.SetStateAction<string[]>>,
+    onSent: (prompt?: string) => Promise<void>,
+    setRecentPrompt: React.Dispatch<React.SetStateAction<string>>,
+    recentPrompt: string,
+    showResult: boolean,
+    loading: boolean,
+    resultData: string,
+    input: string,
+    setInput: React.Dispatch<React.SetStateAction<string>>,
+    newChat: () => Promise<void>
+}
 
-const ContextProvider = (props) => {
+export const Context = createContext<ContextValue | undefined>(undefined);
 
-    const [prevPrompts, setPrevPrompts] = useState([]);
-    const [input, setInput] = useState("");
-    const [recentPrompt, setRecentPrompt] = useState("");
-    const [showResult, setShowResult] = useState(false)
-    const [loading, setLoading] = useState(false)
-    const [resultData, setResultData] = useState("")
+interface ContextProviderProps {
+    children: ReactNode
+}
+
+const ContextProvider = (props: ContextProviderProps) => {
+
+    const [prevPrompts, setPrevPrompts] = useState<string[]>([]);
+    const [input, setInput] = useState<string>("");
+    const [recentPrompt, setRecentPrompt] = useState<string>("");
+    const [showResult, setShowResult] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(false)
+    const [resultData, setResultData] = useState<string>("")
 
 
-    function delayPara(index, nextWord) {
+    function delayPara(index: number, nextWord: string) {
         setTimeout(function () {
             setResultData(prev => prev + nextWord)
         }, 75 * index);
     }
 
-    const onSent = async (prompt) => {
+    const onSent = async (prompt?: string) => {
 
         setResultData("")
         setLoading(true)
